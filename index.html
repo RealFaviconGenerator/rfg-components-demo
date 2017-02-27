@@ -1,0 +1,153 @@
+<html>
+  <head>
+    <link href="style.css" rel="stylesheet">
+  </head>
+  <body>
+    <h1>RFG Components Demo</h1>
+
+    <p>
+      Visit <a href="https://realfavicongenerator.net/api/web_components">RealFaviconGenerator Components page</a>
+      for more information.
+    </p>
+
+    <p>
+      For a live demo, use the <a href="https://realfavicongenerator.net/">Favicon generator</a>
+      and the <a href="https://realfavicongenerator.net/social">Social generator</a>.
+    </p>
+
+    <h2>Facebook</h2>
+
+    <div id="facebook-editor"></div>
+
+    <div id="facebook-form">
+      <div id="platforms"></div>
+
+      <div id="formats"></div>
+
+      <div>
+        <label>
+          Title
+          <input type="text" name="title">
+        </label>
+      </div>
+
+      <div>
+        <label>
+          Description
+          <input type="text" name="description">
+        </label>
+      </div>
+
+      <div>
+        <label>
+          URL
+          <input type="text" name="url">
+        </label>
+      </div>
+
+      <div>
+        <label>
+          Scale
+          <input type="range" name="scale" min="0" max="100">
+        </label>
+      </div>
+
+      <div>
+        <label>
+          Background color
+          <input type="color" name="background-color" value="#ffffff">
+        </label>
+      </div>
+    </div>
+
+    <button id="get-api-request">Get API Request</button>
+    <div id="api-request"></div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://realfavicongenerator.net/web-components/js/core.min.js"></script>
+    <script src="https://realfavicongenerator.net/web-components/js/facebook.min.js"></script>
+    <script>
+      var fb = new RFGFacebook({
+        apiKey: 'TODO',
+        element: $('#facebook-editor'),
+        master_image_src: 'sky.jpg',
+        format: 'wide',
+        title: 'A sample title',
+        description: 'You should change this description',
+        url: 'http://example.com/some_page'
+      });
+
+      fb.on('scaleChange', function(e, currentScale, minScale, maxScale) {
+        var range = $('input[name="scale"]');
+        currentScale = RFGComponent.transposeInterval(currentScale, minScale, maxScale,
+          range.attr('min'), range.attr('max'));
+        range.val(currentScale);
+      });
+
+      fb.render();
+
+      $('#formats').find('input[name="format"][value="' +
+        fb.getFormat() + '"]').attr('checked', 'checked');
+
+      var platforms = fb.getAvailablePlatforms();
+      Object.keys(platforms).forEach(function(platform) {
+        $('#platforms').append('<label>'
+            + '<input type="radio" name="platform" value="'
+            + platform + '"'
+            + ((platform == fb.getPlatform()) ? ' checked' : '')
+            + '>' + platforms[platform]
+          + '</label>');
+      });
+      $('#platforms').find('input[name="platform"]').change(function() {
+        var newPlatform = $('input[name="platform"]:checked').val();
+        fb.setPlatform(newPlatform);
+      });
+
+      var formats = fb.getAvailableFormats();
+      Object.keys(formats).forEach(function(format) {
+        $('#formats').append('<label>'
+            + '<input type="radio" name="format" value="'
+            + format + '"'
+            + ((format == fb.getFormat()) ? ' checked' : '')
+            + '>' + formats[format]
+          + '</label>');
+      });
+      $('#formats').find('input[name="format"]').change(function() {
+        var newFormat = $('input[name="format"]:checked').val();
+        fb.setFormat(newFormat);
+      });
+
+      $('input[name="title"]').on('input', function(val) {
+        fb.setTitle($('input[name="title"]').val());
+      });
+      $('input[name="description"]').on('input', function(val) {
+        fb.setDescription($('input[name="description"]').val());
+      });
+      $('input[name="url"]').on('input', function(val) {
+        fb.setUrl($('input[name="url"]').val());
+      });
+      var is = $('input[name="scale"]');
+      is.bind('propertychange change click keyup input paste', function() {
+        var range = $(this);
+        fb.setScale(range.val(), range.attr('min'), range.attr('max'));
+      });
+
+      $('input[name="background-color"]').on('input', function(val) {
+        fb.setBackgroundColor($('input[name="background-color"]').val());
+      });
+
+      $('#get-api-request').click(function() {
+        var request = fb.getApiRequest();
+        $('#api-request').html(JSON.stringify(request));
+        RFGComponent.postApiRequest(request,
+          function(response) {
+            console.log("Success");
+            console.log(response);
+          }, function(error) {
+            console.log("Error");
+            console.log(error);
+          });
+      });
+    </script>
+  </body>
+</html>
