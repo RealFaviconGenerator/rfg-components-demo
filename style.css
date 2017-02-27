@@ -1,4 +1,9 @@
+
 #facebook-editor {
-  width: 520px;
   float: left;
+  width: 520px;
+}
+
+#facebook-form > div {
+  margin-bottom: 1em;
 }
