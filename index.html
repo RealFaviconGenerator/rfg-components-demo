@@ -61,7 +61,18 @@
         </div>
 
         <button id="get-api-request">Get API Request</button>
-        <div id="api-request"></div>
+
+        <div id="api-request-container" style="display:none">
+          <p>
+            This request is to be run server-side. First you need to replace
+            <code class="api-key-placeholder"></code> with your actual API key.
+            Then, the request is ready to be sent to RealFaviconGenerator.
+          </p>
+
+          <div>
+            <code id="api-request"></code>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -70,7 +81,6 @@
     <script src="https://realfavicongenerator.net/web-components/js/facebook.min.js"></script>
     <script>
       var fb = new RFGFacebook({
-        apiKey: 'TODO',
         element: $('#facebook-editor'),
         master_image_src: 'sky.jpg',
         format: 'wide',
@@ -140,15 +150,9 @@
 
       $('#get-api-request').click(function() {
         var request = fb.getApiRequest();
+        $('#api-request-container .api-key-placeholder').html(RFGComponent.API_KEY_PLACEHOLDER);
         $('#api-request').html(JSON.stringify(request));
-        RFGComponent.postApiRequest(request,
-          function(response) {
-            console.log("Success");
-            console.log(response);
-          }, function(error) {
-            console.log("Error");
-            console.log(error);
-          });
+        $('#api-request-container').fadeIn();
       });
     </script>
   </body>
