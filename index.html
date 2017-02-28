@@ -98,9 +98,6 @@
 
       fb.render();
 
-      $('#formats').find('input[name="format"][value="' +
-        fb.getFormat() + '"]').attr('checked', 'checked');
-
       var platforms = fb.getAvailablePlatforms();
       Object.keys(platforms).forEach(function(platform) {
         $('#platforms').append('<label>'
