@@ -80,6 +80,7 @@
     <script src="https://realfavicongenerator.net/web-components/js/core.min.js"></script>
     <script src="https://realfavicongenerator.net/web-components/js/facebook.min.js"></script>
     <script>
+      // Create the editor
       var fb = new RFGFacebook({
         element: $('#facebook-editor'),
         master_image_src: 'sky.jpg',
@@ -89,6 +90,7 @@
         url: 'http://example.com/some_page'
       });
 
+      // Scale setting
       fb.on('scaleChange', function(e, currentScale, minScale, maxScale) {
         var range = $('input[name="scale"]');
         currentScale = RFGComponent.transposeInterval(currentScale, minScale, maxScale,
@@ -98,6 +100,8 @@
 
       fb.render();
 
+      // As the editor might support more platforms in the future (iPad...),
+      // Better get them from the component itself
       var platforms = fb.getAvailablePlatforms();
       Object.keys(platforms).forEach(function(platform) {
         $('#platforms').append('<label>'
@@ -112,6 +116,10 @@
         fb.setPlatform(newPlatform);
       });
 
+      // Although formats are fixed, the editor will evolve along with Facebook.
+      // Moreover, some formats might not be available when the input image
+      // has a low resolution. So better ask the component instead of hardcoding
+      // Wide/Tall/Square.
       var formats = fb.getAvailableFormats();
       Object.keys(formats).forEach(function(format) {
         $('#formats').append('<label>'
@@ -125,6 +133,8 @@
         var newFormat = $('input[name="format"]:checked').val();
         fb.setFormat(newFormat);
       });
+
+      // Other fields: title, etc.
 
       $('input[name="title"]').on('input', function(val) {
         fb.setTitle($('input[name="title"]').val());
@@ -146,6 +156,8 @@
       });
 
       $('#get-api-request').click(function() {
+        // Ask the component to generate the API request, ready to be sent to
+        // RealFaviconGenerator
         var request = fb.getApiRequest();
         $('#api-request-container .api-key-placeholder').html(RFGComponent.API_KEY_PLACEHOLDER);
         $('#api-request').html(JSON.stringify(request));
